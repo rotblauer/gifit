@@ -1,12 +1,12 @@
 # `$ gifit`: commit messages worth a ~~thousand pictures~~ gif
 
 ### Install.
-- `go get github.com/irstacks/gifit`
+- `go get github.com/rotblauer/gifit`
 - cd there.
 - `go install`
 or ...
 - `git clone`
-- `git build -o gifit`
+- `git build`
 - `mv gifit $GOPATH/bin/` or wherever else you keep your bin shi
 
 ### Use.
