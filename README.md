@@ -10,3 +10,5 @@ gets used by doing:
     + final .gif downloadable/markdown-insertable url looks like `http://i.giphy.com/jFGozCmdXxm0w.gif`, where jFGozCmdXxm0w is the gif's ID.
 - inserts that url into md image syntax per `![cats sorting things](http://i.giphy.com/jFGozCmdXxm0w.gif)` ie ![cats sorting things](http://i.giphy.com/iuHaJ0D7macZq.gif)
 - does `$ git add -A && git commit -m "$that_md_img_string"`
+
+![pwder](./Giphy Attribution Marks/Animated Logos/Badge/Poweredby_640px_Badge.gif)
