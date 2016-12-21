@@ -112,7 +112,7 @@ func main() {
 	embeddableUrl := res.Data[0].BitlyGifUrl
 
 	if useMarkdown {
-		out = formatMarkdownImageMarkup(queryArgsString, markdownImageSource)
+		out = formatMarkdownImageMarkup(encodedQuery, markdownImageSource)
 	}
 	if useEmbeddable {
 		out = embeddableUrl

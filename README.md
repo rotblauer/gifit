@@ -1,4 +1,4 @@
-# `$ gifit`: commit messages worth a ~~thousand pictures~~ gif
+# `$ gifit`: stdout worth a ~~thousand pictures~~ gif
 
 ### Install.
 - `go get github.com/rotblauer/gifit`
@@ -10,13 +10,20 @@ or ...
 - `mv gifit $GOPATH/bin/` or wherever else you keep your bin shi
 
 ### Use.
-Makes a commit message that has a markdown-syntax-ed img ref based on a query to giphy.com.
-`gifit hello kitty`
-`gifit work in progress`
-`gifit shipit`
-`gifit fuck this shit`
-`gifit typos`
-`gifit funny cat`
-Make sure your markdown parser is parsing your commit messages.
+1. Put a gif in a commit message (you are markdowning your commit messages, right?):
+```shell
+$ git commit -m `gifit shipit`
+```
 
+2. Put a gif in a markdown file.
+```shell
+$ gifit squirrels spinning >> Senior_thesis_final_draft.md
+```
+
+3. Copy it to your clipboard.
+```shell
+$ gifit cats in glue | pbcopy
+```
+
+#### :heart:
 ![cuz we haz 2](./Giphy Attribution Marks/Animated Logos/Badge/Poweredby_640px_Badge.gif)
