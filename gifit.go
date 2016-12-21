@@ -79,7 +79,7 @@ func main() {
 		fmt.Println(ga_err)
 		return
 	}
-	fmt.Println(ga_out)
+	fmt.Println(string(ga_out))
 
 	gc := exec.Command("git", "commit", "-m", "'"+formatMarkdownImageMarkup(commit_message, markdownImageSource)+"'")
 	gc_out, gc_err := gc.Output()
@@ -87,6 +87,6 @@ func main() {
 		fmt.Println(gc_err)
 		return
 	}
-	fmt.Println(gc_out)
+	fmt.Println(string(gc_out))
 
 }
