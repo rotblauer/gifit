@@ -22,6 +22,15 @@ type Gif struct {
 	ID   string `json: "id"`
 	Slug string `json: "slug"`
 	// there's a lot more... TODO?
+	Images ImagesObj `json: "images"`
+}
+type ImagesObj struct {
+	Downsized ImagesTypeObj `json: "downsized"`
+	// &c
+}
+type ImagesTypeObj struct {
+	Url string `json: "url"`
+	// &c
 }
 type ResPagination struct {
 	Total_count int `json: "total_count"`
@@ -68,10 +77,11 @@ func main() {
 		return
 	}
 
-	gif_id := res.Data[0].ID
-
+	// gif_id := res.Data[0].ID
+	// markdownImageSource := "http://i.giphy.com/" + gif_id + ".gif"
 	// TODO: handle different kinds of file url provided in Gif json object (?) so we don't have to hardcode url?
-	markdownImageSource := "http://i.giphy.com/" + gif_id + ".gif"
+	// doing....
+	markdownImageSource := res.Data[0].Images.Downsized.Url
 
 	ga := exec.Command("git", "add", "-A")
 	ga_out, ga_err := ga.Output()
