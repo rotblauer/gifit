@@ -67,33 +67,30 @@ func formatMarkdownImageMarkup(altText, source string) string {
 
 func main() {
 
-	// var useMarkdown bool
-	// var useEmbeddable bool
+	var useEmbeddable bool
 	var useStillImage bool
 
 	var out string
 
-	flag.BoolVar(&useStillImage, "i", false, "use still image instead of gif")
-	// flag.BoolVar(&useMarkdown, "m", true, "format as markdown | DEFAULT")
-	// flag.BoolVar(&useEmbeddable, "e", false, "use embeddable | incompatible with markdown")
+	flag.BoolVar(&useStillImage, "s", false, "use still image instead of gif") // "s" for "still"
+	flag.BoolVar(&useEmbeddable, "e", false, "use embeddable | incompatible with still image")
 
 	flag.Parse()
 
-	// if useEmbeddable {
-	// 	useMarkdown = false
-	// 	fmt.Println("Using embeddable.")
-	// }
-	// if useMarkdown {
-	// 	fmt.Println("Using markdowny.")
-	// }
+	// embed haz priority
+	if useEmbeddable {
+		useStillImage = false
+	}
+	if useStillImage {
+		useEmbeddable = false
+	}
 
 	// $@
 	nonflagArgs := flag.Args()
 	if len(nonflagArgs) == 0 {
 		fmt.Println("Useage: $ gifit hello kitty")
-		fmt.Println("-i : use a still image")
-		// fmt.Println("-m : format as markdown  | cannot use with -e | DEFAULT")
-		// fmt.Println("-e : format as embed url | cannot use with -m")
+		fmt.Println("   -i : use a still image")
+		fmt.Println("   -e : format as embed url; CANNOT use with -i")
 		return
 	}
 
@@ -116,12 +113,14 @@ func main() {
 
 	gifSource := res.Data[r].Images.Downsized.Url
 	stillImageSource := res.Data[r].Images.Downsized_Still.Url
-	// embeddableURL := res.Data[0].EmbedURL
+	embeddableURL := res.Data[r].Embed_URL
 
-	if !useStillImage {
-		out = formatMarkdownImageMarkup(encodedQuery, gifSource)
-	} else {
+	out = formatMarkdownImageMarkup(encodedQuery, gifSource) // default with overrides below in case of option flags
+	if useStillImage {
 		out = formatMarkdownImageMarkup(encodedQuery, stillImageSource)
+	}
+	if useEmbeddable {
+		out = embeddableURL
 	}
 
 	fmt.Printf("%s", out)
