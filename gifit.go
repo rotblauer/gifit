@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math/rand"
 	"net/http"
 	url "net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,9 +30,9 @@ type ResMeta struct {
 	Response_id string `json: "response_id"`
 }
 type Gif struct {
-	ID       string `json: "id"`
-	Slug     string `json: "slug"`
-	EmbedURL string `json: "embed_url"`
+	ID        string `json: "id"`
+	Slug      string `json: "slug"`
+	Embed_URL string `json: "embed_url"`
 	// there's a lot more... TODO?
 	Images ImagesObj `json: "images"`
 }
@@ -44,7 +46,8 @@ type ImagesTypeObj struct {
 	// &c
 }
 
-const GiphyPublicAPIKey = "dc6zaTOxFJmzC"
+const GiphyPublicAPIKey string = "dc6zaTOxFJmzC"
+const NumberQueryResults int = 20
 
 func getJson(url string, target interface{}) error {
 	r, err := myClient.Get(url)
@@ -66,7 +69,6 @@ func main() {
 
 	// var useMarkdown bool
 	// var useEmbeddable bool
-	// var copyToClipboard bool
 	var useStillImage bool
 
 	var out string
@@ -74,7 +76,6 @@ func main() {
 	flag.BoolVar(&useStillImage, "i", false, "use still image instead of gif")
 	// flag.BoolVar(&useMarkdown, "m", true, "format as markdown | DEFAULT")
 	// flag.BoolVar(&useEmbeddable, "e", false, "use embeddable | incompatible with markdown")
-	// flag.BoolVar(&copyToClipboard, "p", false, "copy to clipboard")
 
 	flag.Parse()
 
@@ -93,44 +94,36 @@ func main() {
 		fmt.Println("-i : use a still image")
 		// fmt.Println("-m : format as markdown  | cannot use with -e | DEFAULT")
 		// fmt.Println("-e : format as embed url | cannot use with -m")
-		// fmt.Println("-p : copy to clipboard (pbcopy)")
 		return
 	}
 
 	queryArgsString := strings.Join(nonflagArgs, " ")
-	// fmt.Printf("qargs = %s\n", queryArgsString)
 	encodedQuery := url.QueryEscape(queryArgsString)
 
 	res := GiphyQueryResponse{}
+	s := strconv.Itoa(NumberQueryResults)
+	getJson("http://api.giphy.com/v1/gifs/search?q="+encodedQuery+"&limit="+s+"&api_key="+GiphyPublicAPIKey, &res)
 	// http://api.giphy.com/v1/gifs/search?q=hello+kitty&limit=1&api_key=dc6zaTOxFJmzC
-	getJson("http://api.giphy.com/v1/gifs/search?q="+encodedQuery+"&limit=1&api_key="+GiphyPublicAPIKey, &res)
 
 	if len(res.Data) == 0 {
-		fmt.Println("Got 0 results for the GIF search. Shiiii. Try again?")
+		fmt.Printf("Got %d results for the GIF search. Shiiii. Try again?", len(res.Data))
 		return
 	}
 
-	gifSource := res.Data[0].Images.Downsized.Url
-	stillImageSource := res.Data[0].Images.Downsized_Still.Url
+	unixxx := time.Now().Unix()
+	rand.Seed(unixxx)
+	r := rand.Intn(len(res.Data) - 1) // [0, n]
+
+	gifSource := res.Data[r].Images.Downsized.Url
+	stillImageSource := res.Data[r].Images.Downsized_Still.Url
 	// embeddableURL := res.Data[0].EmbedURL
 
 	if !useStillImage {
 		out = formatMarkdownImageMarkup(encodedQuery, gifSource)
 	} else {
 		out = formatMarkdownImageMarkup(encodedQuery, stillImageSource)
-		// fmt.Println(out)
 	}
 
-	// if copyToClipboard {
-	// 	c := exec.Command("pbcopy", out)
-	// 	err := c.Run()
-	// 	if err != nil {
-	// 		fmt.Print(err)
-	// 		return
-	// 	}
-	// 	fmt.Printf("(Copied to clipboard.) %s", out)
-	// } else {
 	fmt.Printf("%s", out)
-	// }
 
 }
