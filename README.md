@@ -4,18 +4,18 @@
 - `go get github.com/rotblauer/gifit`
 - `cd $GOPATH/src/github.com/rotblauer/gifit`
 - `go install`
-<br>
+
 or ...
-<br>
+
 - `git clone <this repo>`
 - `cd <wherever you cloned it to> && go build`
 - `mv gifit $GOPATH/bin/` or wherever else you keep your bin shi
 
 ### Use.
 `$ gifit` finds a random search result from [Giphy](https://github.com/Giphy/GiphyAPI) and sends it to markdown format in your **stdout**, from which point you can behave as irresponsibly as you wish with said markdowned(default)/embeddable gif. 
-<br>
-_Why_ would I ever want _that_? 
-<br>
+
+##### _Why_ would I ever want _that_? 
+
 1. Put a gif in a commit message ([you are markdowning your commit messages, right?](https://github.com/rotblauer/gitea)):
 ```shell
 $ git commit -m `gifit shipit`
@@ -34,6 +34,11 @@ $ gifit -e cats in glue | pbcopy
 4. Get rambunctuous with your [Slack CLI](https://github.com/candrholdings/slack-cli).
 ```shell
 $ slackcli -g professionalcolleagues -m "`gifit -e rat race`"
+```
+
+5. Just look at some beautiful stuff.
+```shell
+$ gifit -e cat rainbow | open -a Safari
 ```
 
 ### Options
