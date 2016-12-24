@@ -16,7 +16,7 @@ or ...
 <br>
 _Why_ would I ever want _that_? 
 <br>
-1. Put a gif in a commit message ([you are markdowning your commit messages, right?](github.com/rotblauer/gitea)):
+1. Put a gif in a commit message ([you are markdowning your commit messages, right?](https://github.com/rotblauer/gitea)):
 ```shell
 $ git commit -m `gifit shipit`
 ```
