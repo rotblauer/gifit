@@ -2,11 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	url "net/url"
-	"os"
-	"os/exec"
 	"strings"
 	"time"
 )
@@ -18,21 +17,6 @@ type GiphyQueryResponse struct {
 	Meta       ResMeta       `json: "meta"`
 	Pagination ResPagination `json: "pagination"`
 }
-type Gif struct {
-	ID          string `json: "id"`
-	Slug        string `json: "slug"`
-	BitlyGifUrl string `json: "bitly_gif_url"`
-	// there's a lot more... TODO?
-	Images ImagesObj `json: "images"`
-}
-type ImagesObj struct {
-	Downsized ImagesTypeObj `json: "downsized"`
-	// &c
-}
-type ImagesTypeObj struct {
-	Url string `json: "url"`
-	// &c
-}
 type ResPagination struct {
 	Total_count int `json: "total_count"`
 	Count       int `json: "count"`
@@ -42,6 +26,22 @@ type ResMeta struct {
 	Status      int    `json: "status"`
 	Msg         string `json: "msg"`
 	Response_id string `json: "response_id"`
+}
+type Gif struct {
+	ID       string `json: "id"`
+	Slug     string `json: "slug"`
+	EmbedURL string `json: "embed_url"`
+	// there's a lot more... TODO?
+	Images ImagesObj `json: "images"`
+}
+type ImagesObj struct {
+	Downsized       ImagesTypeObj `json: "downsized"`
+	Downsized_Still ImagesTypeObj `json: "downsized_still"`
+	// &c
+}
+type ImagesTypeObj struct {
+	Url string `json: "url"`
+	// &c
 }
 
 const GiphyPublicAPIKey = "dc6zaTOxFJmzC"
@@ -53,7 +53,9 @@ func getJson(url string, target interface{}) error {
 	}
 	defer r.Body.Close()
 
-	return json.NewDecoder(r.Body).Decode(target)
+	j := json.NewDecoder(r.Body).Decode(target)
+
+	return j
 }
 
 func formatMarkdownImageMarkup(altText, source string) string {
@@ -62,45 +64,45 @@ func formatMarkdownImageMarkup(altText, source string) string {
 
 func main() {
 
-	useMarkdown := true
-	useEmbeddable := false
-	copyToClipboard := false
+	// var useMarkdown bool
+	// var useEmbeddable bool
+	// var copyToClipboard bool
+	var useStillImage bool
 
 	var out string
 
-	// flag.BoolVar(&useMarkdown, "m", false, "format as markdown")
-	// flag.BoolVar(&useEmbeddable, "e", false, "use embeddable")
+	flag.BoolVar(&useStillImage, "i", false, "use still image instead of gif")
+	// flag.BoolVar(&useMarkdown, "m", true, "format as markdown | DEFAULT")
+	// flag.BoolVar(&useEmbeddable, "e", false, "use embeddable | incompatible with markdown")
 	// flag.BoolVar(&copyToClipboard, "p", false, "copy to clipboard")
 
-	// flag.Parse()
+	flag.Parse()
 
-	// if !useEmbeddable {
-	// 	useMarkdown = true
-	// 	fmt.Println("Using embed.")
-	// } else {
-	// 	fmt.Println("Using markdown.")
+	// if useEmbeddable {
+	// 	useMarkdown = false
+	// 	fmt.Println("Using embeddable.")
+	// }
+	// if useMarkdown {
+	// 	fmt.Println("Using markdowny.")
 	// }
 
 	// $@
-	args := os.Args[1:]
-	if len(args) == 0 {
+	nonflagArgs := flag.Args()
+	if len(nonflagArgs) == 0 {
 		fmt.Println("Useage: $ gifit hello kitty")
+		fmt.Println("-i : use a still image")
 		// fmt.Println("-m : format as markdown  | cannot use with -e | DEFAULT")
 		// fmt.Println("-e : format as embed url | cannot use with -m")
 		// fmt.Println("-p : copy to clipboard (pbcopy)")
 		return
 	}
-	// Remove all args that are flags.
-	var queryArgs []string
-	for _, arg := range args {
-		if !strings.HasPrefix(arg, "-") {
-			queryArgs = append(queryArgs, arg)
-		}
-	}
-	queryArgsString := strings.Join(queryArgs, " ")
+
+	queryArgsString := strings.Join(nonflagArgs, " ")
+	// fmt.Printf("qargs = %s\n", queryArgsString)
 	encodedQuery := url.QueryEscape(queryArgsString)
 
 	res := GiphyQueryResponse{}
+	// http://api.giphy.com/v1/gifs/search?q=hello+kitty&limit=1&api_key=dc6zaTOxFJmzC
 	getJson("http://api.giphy.com/v1/gifs/search?q="+encodedQuery+"&limit=1&api_key="+GiphyPublicAPIKey, &res)
 
 	if len(res.Data) == 0 {
@@ -108,41 +110,27 @@ func main() {
 		return
 	}
 
-	markdownImageSource := res.Data[0].Images.Downsized.Url
-	embeddableUrl := res.Data[0].BitlyGifUrl
+	gifSource := res.Data[0].Images.Downsized.Url
+	stillImageSource := res.Data[0].Images.Downsized_Still.Url
+	// embeddableURL := res.Data[0].EmbedURL
 
-	if useMarkdown {
-		out = formatMarkdownImageMarkup(encodedQuery, markdownImageSource)
-	}
-	if useEmbeddable {
-		out = embeddableUrl
-	}
-	if copyToClipboard {
-		c := exec.Command("pbcopy", out)
-		err := c.Run()
-		if err != nil {
-			fmt.Print(err)
-			return
-		}
-		fmt.Printf("(Copied to clipboard.) %s", out)
+	if !useStillImage {
+		out = formatMarkdownImageMarkup(encodedQuery, gifSource)
 	} else {
-		fmt.Printf("%s", out)
+		out = formatMarkdownImageMarkup(encodedQuery, stillImageSource)
+		// fmt.Println(out)
 	}
 
-	// ga := exec.Command("git", "add", "-A")
-	// ga_out, ga_err := ga.Output()
-	// if ga_err != nil {
-	// 	fmt.Println(ga_err)
-	// 	return
+	// if copyToClipboard {
+	// 	c := exec.Command("pbcopy", out)
+	// 	err := c.Run()
+	// 	if err != nil {
+	// 		fmt.Print(err)
+	// 		return
+	// 	}
+	// 	fmt.Printf("(Copied to clipboard.) %s", out)
+	// } else {
+	fmt.Printf("%s", out)
 	// }
-	// fmt.Println(string(ga_out))
-
-	// gc := exec.Command("git", "commit", "-m", "'"+formatMarkdownImageMarkup(commit_message, markdownImageSource)+"'")
-	// gc_out, gc_err := gc.Output()
-	// if gc_err != nil {
-	// 	fmt.Println(gc_err)
-	// 	return
-	// }
-	// fmt.Println(string(gc_out))
 
 }

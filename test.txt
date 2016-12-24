@@ -1,0 +1,19 @@
+package main
+
+import "flag"
+import "fmt"
+import "strings"
+
+func main() {
+	var def bool
+	// def := true
+
+	flag.BoolVar(&def, "e", false, "make def true")
+
+	flag.Parse()
+
+	args := flag.Args()
+	sargs := strings.Join(args, " + ")
+
+	fmt.Println(def, sargs)
+}
