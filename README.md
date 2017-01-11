@@ -3,8 +3,7 @@
 $ gifit what it is
 # > ![what+it+is](http://media2.giphy.com/media/EsmlrgWNx5v0Y/giphy-tumblr.gif)
 ```
-==
-![what+it+is](http://media2.giphy.com/media/EsmlrgWNx5v0Y/giphy-tumblr.gif)
+Which gets you... ![what+it+is](http://media2.giphy.com/media/EsmlrgWNx5v0Y/giphy-tumblr.gif)
 
 ### Install.
 - `go get github.com/rotblauer/gifit`
