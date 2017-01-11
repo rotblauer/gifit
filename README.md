@@ -1,4 +1,10 @@
 # `$ gifit`: stdout worth a ~~thousand pictures~~ gif
+```shell
+$ gifit what it is
+# > ![what+it+is](http://media2.giphy.com/media/EsmlrgWNx5v0Y/giphy-tumblr.gif)
+```
+==
+![what+it+is](http://media2.giphy.com/media/EsmlrgWNx5v0Y/giphy-tumblr.gif)
 
 ### Install.
 - `go get github.com/rotblauer/gifit`
@@ -12,9 +18,9 @@ or ...
 - `mv gifit $GOPATH/bin/` or wherever else you keep your bin shi
 
 ### Use.
-`$ gifit` finds a random search result from [Giphy](https://github.com/Giphy/GiphyAPI) and sends it to markdown format in your **stdout**, from which point you can behave as irresponsibly as you wish with said markdowned(default)/embeddable gif. 
+`$ gifit` finds a random search result from [Giphy](https://github.com/Giphy/GiphyAPI) and sends it to markdown format in your **stdout**, from which point you can behave as irresponsibly as you wish with said markdowned(default)/embeddable gif.
 
-##### _Why_ would I ever want _that_? 
+##### _Why_ would I ever want _that_?
 
 1. Put a gif in a commit message ([you are markdowning your commit messages, right?](https://github.com/rotblauer/gitea)):
 ```shell
@@ -38,7 +44,7 @@ $ slackcli -g professionalcolleagues -m "`gifit -e rat race`"
 
 5. Just look at some beautiful stuff.
 ```shell
-$ gifit -e cat rainbow | open -a Safari
+$ open -a Safari `gifit -e cat rainbow`
 ```
 
 ### Options
@@ -46,7 +52,7 @@ $ gifit -e cat rainbow | open -a Safari
     # -s : still image
     gifit -s awesome cats
     > ![awesome+cats](http://media1.giphy.com/media/3o6Zt6dKB6ik0llg0o/giphy_s.gif)
-    
+
     # -e : embed url (display previewly/properly in social posts, etc)
     gifit -e hilarious hamsters
     > http://giphy.com/embed/4HZbQBHDiUwIo
